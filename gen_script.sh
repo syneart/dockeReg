@@ -27,19 +27,19 @@ _REG_AUTH_URL=${_REG_AUTH_URL}
 _REG_URL=${_REG_URL}
 echo "[INFO] Get Access Token .."
 _GET_ACCESS_TOKEN=\`curl -s -H "Authorization: Basic \${_BASIC_TOKEN}" "\${_REG_AUTH_URL}/auth?service=Docker+registry&scope=registry:catalog:*"\`
-_ACCESS_TOKEN=\`echo \${_GET_ACCESS_TOKEN} | jq -r .access_token\`
+_ACCESS_TOKEN=\`echo \${_GET_ACCESS_TOKEN} | sed -En 's/.*"access_token":"([^"]*).*/\1/p'\`
 echo "[INFO] Get Catalog .."
 _CATELOG=\`curl -s -H "Authorization: Bearer \${_ACCESS_TOKEN}" \${_REG_URL}/v2/_catalog\`
-_REPOSITORIES=\`echo \${_CATELOG} | jq .repositories[]\`
-mapfile results_repo_name < <( echo "\${_REPOSITORIES}" )
+_REPOSITORIES=\`echo \${_CATELOG} | sed -r 's/^[^:]*:(.*)\}$/\1/' | sed -e 's/\[//g' -e 's/\]//g' -e 's/\,/ /g'\`
+results_repo_name=( \${_REPOSITORIES} )
 for ((k=0; k<"\${#results_repo_name[@]}"; k++))
 do
     IFS=$'\n' read -r RepoName <<< "\${results_repo_name[\$k]}"
     strRepoName=\`echo \${RepoName} | sed 's/\"//g'\`
     echo "[INFO] Get Access Token and Tag For Repositories Name: \${strRepoName}"
     get_access_token=\`curl -s -H "Authorization: Basic \${_BASIC_TOKEN}" "\${_REG_AUTH_URL}/auth?service=Docker+registry&scope=repository:\${strRepoName}:*"\`
-    access_token=\`echo \${get_access_token} | jq -r .access_token\`
-    curl -s -H "Authorization: Bearer \${access_token}" \${_REG_URL}/v2/\${strRepoName}/tags/list | jq
+    access_token=\`echo \${get_access_token} | sed -En 's/.*"access_token":"([^"]*).*/\1/p'\`
+    curl -s -H "Authorization: Bearer \${access_token}" \${_REG_URL}/v2/\${strRepoName}/tags/list | json_pp
 done
 _FILE_END_
 echo "[INFO] Use \`bash ./${_FILE_NAME}\` to enjoy!.."
