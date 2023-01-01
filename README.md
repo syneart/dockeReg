@@ -1,21 +1,60 @@
 # list_docker_registry_repos
-List docker registry repositories and image tags with Docker Registry v2 + Token Auth Server (Registry v2 Authentication)
+List docker registry repositories and image tags with Docker Registry v2 and supported Token Auth Server (Registry v2 Authentication)
 
 ### In Unix (include MacOS)
 
-You can use Terminal , and type (change directory to bash file location)
+Use Terminal , and type (change directory to bash file location)
 
-`$ bash ./gen_script.sh <username> <password> <private docker registry auth url> <private docker registry url>`
+```
+Usage: gen_script.sh
+  Options:
+      -u | --registry_username
+         Docker registry username
+      -p | --registry_password
+         Docker registry password
+      -t | --registry_basic_token
+         Docker registry basic token, use \`echo -n <REGISTRY_USERNAME>:'<REGISTRY_PASSWORD>' | base64\` to generate.
+      --registry_auth_url
+         Docker registry OAuth2 Server url
+      --registry_url
+         Docker registry v2 Server url
+      -h | --help
+         Print this help
+```
 
 for example,
 
-`$ bash ./gen_script.sh syneart 'Y#=r3Tg*5$d5x6?6mC' https://dockeregauth.syneart.com http://localhost:5000`
+```
+$ bash ./gen_script.sh \
+       -u syneart \
+       -p 'Y#=r3Tg*5$d5x6?6mC' \
+       --registry_auth_url https://auth.syneart.com \
+       --registry_url http://localhost:5000
+```
 
-and it will created the Script file.
+or you can generate and use registry basic token by yourself, like
 
-then Use 
+```
+$ bash ./gen_script.sh \
+       -t 'c3luZWFydDpZIz1yM1RnKjUkZDV4Nj82bUM=' \
+       --registry_auth_url https://auth.syneart.com \
+       --registry_url http://localhost:5000
+```
 
-`bash ./list_docker_registry_repos.sh` to enjoy!
+or if you use Harbor v2.x you can use without `--registry_auth_url` parameter, like
+
+```
+$ bash ./gen_script.sh \
+       -t 'c3luZWFydDpZIz1yM1RnKjUkZDV4Nj82bUM=' \
+       --registry_url http://localhost:5000
+```
+
+and it will created the Script file, excute
+
+```
+$ bash ./list_docker_registry_repos.sh
+```
+to enjoy!
 
 ## Example Result
 Then you will see
@@ -54,9 +93,7 @@ Then you will see
 root@docker_registry_dev:~/syneart/docker/registry#
 ```
 ## Requirement
-1. curl
-2. jq
+curl
 
 ## Note
 1. If your password has special characters, please surround the password with single quotes, like 'pa!wo0d@', not pa!wo0d@
-2. This script only use for Docker Registry v2 + Token Auth Server (Registry v2 Authentication)
