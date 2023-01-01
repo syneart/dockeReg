@@ -31,6 +31,11 @@ usage () {
     "
 }
 
+if [ -z "$1" ]
+then
+    usage
+    exit
+fi
 
 until [ -z "$1" ]
   do
@@ -60,6 +65,12 @@ until [ -z "$1" ]
           exit 2;;
    esac
   done
+
+if [ -z "${_REG_URL}" ]
+then
+    usage
+    exit
+fi
 
 if [[ "${_REG_USERNAME}/" != "/" || "${_REG_PASSWORD}/" != "/" ]]  && [[ "${_REG_BASIC_TOKEN}/" != "/" ]]; then
     echo "[Warning] If you setting basic token, registry's username and password no need to specify."
@@ -91,6 +102,7 @@ cat >> ${_FILE_NAME} <<_FILE_END_
 echo "[INFO] Get Catalog .."
 _CATELOG=\`curl -s -H "Authorization: Basic \${_REG_BASIC_TOKEN}" \${_REG_URL}/v2/_catalog\`
 _FILE_END_
+fi
 
 if [ "${_USE_OAUTH2}" = "1" ] ; then
 cat >> ${_FILE_NAME} <<_FILE_END_
