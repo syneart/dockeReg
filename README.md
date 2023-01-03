@@ -33,7 +33,14 @@ Usage: gen_script.sh
 ```
 
 #### for example, Docker Hub
+##### public repo
+```
+$ bash ./gen_script.sh \
+       --from_docker_hub \
+       --hub_org_name library
+```
 
+##### private repo
 ```
 $ bash ./gen_script.sh \
        --from_docker_hub \
@@ -43,7 +50,13 @@ $ bash ./gen_script.sh \
 ```
 
 #### for example, Docker Registry
+##### public repo
+```
+$ bash ./gen_script.sh \
+       --registry_url http://localhost:5000
+```
 
+##### private repo
 ```
 $ bash ./gen_script.sh \
        --registry_username syneart \
